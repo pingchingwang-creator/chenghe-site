@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>承合設計 · 後台管理</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500&family=Noto+Serif+TC:wght@300;400&family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0F0D0B;
+  --bg2: #1A1714;
+  --bg3: #22201C;
+  --border: rgba(255,255,255,0.08);
+  --border-gold: rgba(184,150,90,0.25);
+  --text: #E8E4DC;
+  --text-dim: rgba(232,228,220,0.5);
+  --text-faint: rgba(232,228,220,0.25);
+  --terracotta: #C4633A;
+  --terracotta-dim: rgba(196,99,58,0.15);
+  --gold: #B8965A;
+  --gold-dim: rgba(184,150,90,0.15);
+  --tech-blue: #1E3A5F;
+  --tech-cyan: #4AABB8;
+  --cyan-dim: rgba(74,171,184,0.15);
+  --moss: #5A6B4A;
+  --moss-dim: rgba(90,107,74,0.2);
+  --red: #C04040;
+  --red-dim: rgba(192,64,64,0.15);
+  --font-sans: 'Noto Sans TC', sans-serif;
+  --font-serif: 'Noto Serif TC', serif;
+  --font-jp: 'Zen Kaku Gothic New', sans-serif;
+  --sidebar-w: 240px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+/* ── LOGIN SCREEN ── */
+#loginScreen {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.login-brand {
+  text-align: center;
+}
+
+.login-brand-jp {
+  font-family: var(--font-jp);
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.login-brand-main {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  color: var(--text);
+}
+
+.login-subtitle {
+  font-family: var(--font-jp);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--text-faint);
+  margin-top: 4px;
+}
+
+.login-form {
+  background: var(--bg2);
+  border: 1px solid var(--border-gold);
+  border-radius: 2px;
+  padding: 40px 48px;
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.login-field label {
+  font-family: var(--font-jp);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: var(--gold);
+}
+
+.login-field input {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 1px;
+  padding: 10px 14px;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.login-field input:focus {
+  border-color: var(--border-gold);
+}
+
+.login-btn {
+  background: var(--terracotta);
+  color: white;
+  border: none;
+  padding: 12px;
+  font-family: var(--font-jp);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-radius: 1px;
+  margin-top: 8px;
+}
+
+.login-btn:hover { background: #D07050; }
+
+.login-hint {
+  font-size: 10px;
+  color: var(--text-faint);
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+  overflow-y: auto;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-header {
+  padding: 28px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-logo-jp {
+  font-family: var(--font-jp);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+}
+
+.sidebar-logo-main {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  color: var(--text);
+  margin-top: 4px;
+}
+
+.sidebar-badge {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 8px;
+  background: var(--cyan-dim);
+  border: 1px solid rgba(74,171,184,0.3);
+  border-radius: 1px;
+  font-family: var(--font-jp);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--tech-cyan);
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.sidebar-section-label {
+  font-family: var(--font-jp);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: var(--text-faint);
+  padding: 12px 24px 6px;
+  text-transform: uppercase;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  position: relative;
+}
+
+.sidebar-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--terracotta);
+  transform: scaleY(0);
+  transition: transform 0.2s;
+}
+
+.sidebar-item:hover,
+.sidebar-item.active {
+  color: var(--text);
+  background: rgba(255,255,255,0.03);
+}
+
+.sidebar-item.active::before { transform: scaleY(1); }
+.sidebar-item.active { color: var(--text); }
+
+.sidebar-icon { font-size: 14px; flex-shrink: 0; }
+
+.sidebar-count {
+  margin-left: auto;
+  background: var(--terracotta-dim);
+  color: var(--terracotta);
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-family: var(--font-jp);
+}
+
+.sidebar-footer {
+  padding: 20px 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--gold-dim);
+  border: 1px solid var(--border-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.user-info {}
+.user-name { font-size: 12px; color: var(--text); }
+.user-role { font-size: 9px; color: var(--text-faint); letter-spacing: 0.1em; }
+
+.sidebar-logout {
+  font-family: var(--font-jp);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--text-faint);
+  cursor: pointer;
+  transition: color 0.2s;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 0;
+}
+
+.sidebar-logout:hover { color: var(--red); }
+
+/* ── MAIN CONTENT ── */
+.main-wrap {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  height: 60px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  background: var(--bg2);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.topbar-title {
+  font-family: var(--font-jp);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+}
+
+.topbar-title strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.topbar-link {
+  font-family: var(--font-jp);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--tech-cyan);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.topbar-link:hover { opacity: 0.7; }
+
+/* ── CONTENT AREA ── */
+.content {
+  padding: 32px;
+  flex: 1;
+}
+
+/* Panels */
+.panel {
+  display: none;
+  flex-direction: column;
+  gap: 24px;
+  animation: fadeIn 0.3s ease;
+}
+
+.panel.active { display: flex; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ── DASHBOARD ── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.stat-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+
+.stat-card:hover { border-color: var(--border-gold); }
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+
+.stat-card.orange::before { background: var(--terracotta); }
+.stat-card.gold::before { background: var(--gold); }
+.stat-card.cyan::before { background: var(--tech-cyan); }
+.stat-card.moss::before { background: #7A9B6A; }
+
+.stat-label {
+  font-family: var(--font-jp);
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.stat-value {
+  font-family: var(--font-jp);
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--text);
+}
+
+.stat-value span {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-left: 4px;
+}
+
+.stat-change {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #7A9B6A;
+  letter-spacing: 0.05em;
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-family: var(--font-jp);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.card-body { padding: 24px; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 1px;
+  font-family: var(--font-jp);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  font-weight: 400;
+}
+
+.btn-terracotta { background: var(--terracotta); color: white; }
+.btn-terracotta:hover { background: #D07050; }
+
+.btn-outline { background: transparent; color: var(--text-dim); border: 1px solid var(--border); }
+.btn-outline:hover { border-color: var(--border-gold); color: var(--text); }
+
+.btn-gold { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--border-gold); }
+.btn-gold:hover { background: rgba(184,150,90,0.25); }
+
+.btn-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(192,64,64,0.2); }
+.btn-red:hover { background: rgba(192,64,64,0.25); }
+
+.btn-cyan { background: var(--cyan-dim); color: var(--tech-cyan); border: 1px solid rgba(74,171,184,0.25); }
+.btn-cyan:hover { background: rgba(74,171,184,0.25); }
+
+/* ── FORM CONTROLS ── */
+.form-row {
+  display: grid;
+  gap: 16px;
+}
+
+.form-row.cols-2 { grid-template-columns: 1fr 1fr; }
+.form-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-family: var(--font-jp);
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.field input,
+.field textarea,
+.field select {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 1px;
+  padding: 9px 12px;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 300;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color: var(--border-gold);
+  background: rgba(255,255,255,0.06);
+}
+
+.field textarea { resize: vertical; min-height: 100px; }
+.field select { appearance: none; cursor: pointer; }
+.field select option { background: var(--bg2); }
+
+/* ── TABLE ── */
+.table-wrap { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+th {
+  font-family: var(--font-jp);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  padding: 10px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-weight: 400;
+}
+
+td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-dim);
+  vertical-align: middle;
+}
+
+tr:last-child td { border-bottom: none; }
+
+tr:hover td { background: rgba(255,255,255,0.02); color: var(--text); }
+
+/* ── STATUS BADGES ── */
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 1px;
+  font-family: var(--font-jp);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+.badge-pub { background: var(--moss-dim); color: #8BC47A; border: 1px solid rgba(90,107,74,0.3); }
+.badge-draft { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--border-gold); }
+.badge-coming { background: var(--cyan-dim); color: var(--tech-cyan); border: 1px solid rgba(74,171,184,0.25); }
+
+/* ── RICH TEXT EDITOR (Simulated) ── */
+.editor-toolbar {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 1px 1px 0 0;
+  flex-wrap: wrap;
+}
+
+.editor-btn {
+  width: 28px; height: 28px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 1px;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-family: var(--font-sans);
+  font-weight: 400;
+}
+
+.editor-btn:hover { background: rgba(255,255,255,0.06); color: var(--text); border-color: var(--border); }
+
+.editor-area {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 1px 1px;
+  padding: 16px;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.8;
+  min-height: 200px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.editor-area:focus { border-color: var(--border-gold); }
+
+/* ── IMAGE UPLOAD ── */
+.upload-zone {
+  border: 1px dashed rgba(255,255,255,0.15);
+  border-radius: 2px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.upload-zone:hover {
+  border-color: var(--border-gold);
+  background: rgba(184,150,90,0.03);
+}
+
+.upload-icon { font-size: 32px; opacity: 0.4; }
+.upload-text { font-size: 12px; color: var(--text-dim); }
+.upload-hint { font-size: 10px; color: var(--text-faint); letter-spacing: 0.1em; font-family: var(--font-jp); }
+
+/* ── ROADMAP NOTICE ── */
+.roadmap-card {
+  background: var(--bg2);
+  border: 1px solid rgba(74,171,184,0.2);
+  border-radius: 2px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.roadmap-icon { font-size: 20px; }
+
+.roadmap-title {
+  font-family: var(--font-jp);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--tech-cyan);
+  margin-bottom: 4px;
+}
+
+.roadmap-desc {
+  font-size: 11px;
+  color: var(--text-faint);
+  line-height: 1.6;
+}
+
+/* ── MOBILE SIDEBAR TOGGLE ── */
+.sidebar-toggle {
+  display: none;
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px; height: 48px;
+  background: var(--terracotta);
+  border-radius: 50%;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 200;
+  box-shadow: 0 4px 20px rgba(196,99,58,0.4);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .main-wrap {
+    margin-left: 0;
+  }
+
+  .sidebar-toggle { display: flex; align-items: center; justify-content: center; }
+
+  .stats-row { grid-template-columns: 1fr 1fr; }
+
+  .form-row.cols-2,
+  .form-row.cols-3 { grid-template-columns: 1fr; }
+
+  .content { padding: 20px 16px; }
+}
+
+@media (max-width: 600px) {
+  .stats-row { grid-template-columns: 1fr; }
+}
+
+/* ── DIVIDER ── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 8px 0;
+}
+
+/* ── INLINE ACTIONS ── */
+.action-group {
+  display: flex;
+  gap: 6px;
+}
+
+/* Skeleton loader */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg2) 25%, var(--bg3) 50%, var(--bg2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 2px;
+  height: 12px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="loginScreen">
+  <div class="login-brand">
+    <div class="login-brand-jp">CHENGHE DESIGN · ADMIN</div>
+    <div class="login-brand-main">承合設計後台</div>
+    <div class="login-subtitle">CONTENT MANAGEMENT SYSTEM</div>
+  </div>
+  <div class="login-form">
+    <div class="login-field">
+      <label>帳號 USERNAME</label>
+      <input type="text" id="loginUser" placeholder="admin" value="admin">
+    </div>
+    <div class="login-field">
+      <label>密碼 PASSWORD</label>
+      <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">登入後台 LOGIN →</button>
+    <div class="login-hint">預設帳密 admin / admin123</div>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo-jp">CHENGHE · ADMIN</div>
+    <div class="sidebar-logo-main">承合設計</div>
+    <div class="sidebar-badge">後台管理系統 v1.0</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-label">總覽</div>
+    <div class="sidebar-item active" onclick="showPanel('dashboard', this)">
+      <span class="sidebar-icon">◈</span> 儀表板
+    </div>
+
+    <div class="sidebar-section-label">內容管理</div>
+    <div class="sidebar-item" onclick="showPanel('about', this)">
+      <span class="sidebar-icon">◎</span> 公司介紹
+    </div>
+    <div class="sidebar-item" onclick="showPanel('news', this)">
+      <span class="sidebar-icon">◻</span> 最新消息
+      <span class="sidebar-count">5</span>
+    </div>
+    <div class="sidebar-item" onclick="showPanel('products', this)">
+      <span class="sidebar-icon">◈</span> 產品服務
+    </div>
+
+    <div class="sidebar-section-label">即將推出</div>
+    <div class="sidebar-item" onclick="showPanel('shopee', this)" style="opacity:0.5">
+      <span class="sidebar-icon">🛒</span> 蝦皮商店整合
+      <span class="sidebar-count" style="background:var(--cyan-dim);color:var(--tech-cyan)">coming</span>
+    </div>
+    <div class="sidebar-item" onclick="showPanel('members', this)" style="opacity:0.5">
+      <span class="sidebar-icon">👤</span> 會員管理
+      <span class="sidebar-count" style="background:var(--cyan-dim);color:var(--tech-cyan)">coming</span>
+    </div>
+    <div class="sidebar-item" onclick="showPanel('inquiry', this)" style="opacity:0.5">
+      <span class="sidebar-icon">✉</span> 詢問信箱
+      <span class="sidebar-count" style="background:var(--cyan-dim);color:var(--tech-cyan)">coming</span>
+    </div>
+
+    <div class="sidebar-section-label">系統</div>
+    <div class="sidebar-item" onclick="showPanel('settings', this)">
+      <span class="sidebar-icon">⚙</span> 網站設定
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="user-avatar">管</div>
+      <div class="user-info">
+        <div class="user-name">Admin</div>
+        <div class="user-role">SUPER ADMIN</div>
+      </div>
+    </div>
+    <button class="sidebar-logout" onclick="doLogout()">← 登出 LOGOUT</button>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<div class="main-wrap">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle"><strong>儀表板</strong> · DASHBOARD</div>
+    <div class="topbar-actions">
+      <a href="index.html" target="_blank" class="topbar-link">↗ 檢視前台</a>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="stats-row">
+        <div class="stat-card orange">
+          <div class="stat-label">新聞文章</div>
+          <div class="stat-value">5 <span>篇</span></div>
+          <div class="stat-change">↑ 已發布</div>
+        </div>
+        <div class="stat-card gold">
+          <div class="stat-label">服務項目</div>
+          <div class="stat-value">6 <span>項</span></div>
+          <div class="stat-change">↑ 全部上架</div>
+        </div>
+        <div class="stat-card cyan">
+          <div class="stat-label">詢問表單</div>
+          <div class="stat-value">— <span>封</span></div>
+          <div class="stat-change">即將開放</div>
+        </div>
+        <div class="stat-card moss">
+          <div class="stat-label">會員數</div>
+          <div class="stat-value">— <span>人</span></div>
+          <div class="stat-change">即將開放</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">最近新聞</div>
+          <button class="btn btn-gold" onclick="showPanel('news', null)">管理新聞 →</button>
+        </div>
+        <div class="card-body">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>日期</th>
+                  <th>標題</th>
+                  <th>分類</th>
+                  <th>狀態</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="dashNewsTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card">
+          <div class="card-header"><div class="card-title">快速操作</div></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+            <button class="btn btn-terracotta" onclick="showPanel('news',null);setTimeout(()=>document.getElementById('newsForm').style.display='flex',100)">+ 新增新聞</button>
+            <button class="btn btn-outline" onclick="showPanel('about',null)">✎ 編輯公司介紹</button>
+            <button class="btn btn-outline" onclick="showPanel('products',null)">✎ 更新產品服務</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">開發路線圖</div></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text-dim)">
+              <span style="color:#7A9B6A">✓</span> 前台形象網站
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text-dim)">
+              <span style="color:#7A9B6A">✓</span> 後台 CMS 管理
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--tech-cyan)">
+              ○ 蝦皮商店整合 (Phase 2)
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--tech-cyan)">
+              ○ 會員系統 (Phase 2)
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text-faint)">
+              ◻ 詢問信箱整合 (Phase 3)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT PANEL -->
+    <div class="panel" id="panel-about">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">公司介紹管理</div>
+          <button class="btn btn-terracotta" onclick="saveAbout()">儲存變更</button>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:20px">
+          <div class="form-row cols-2">
+            <div class="field">
+              <label>公司名稱（中文）</label>
+              <input type="text" value="承合設計">
+            </div>
+            <div class="field">
+              <label>公司名稱（英文）</label>
+              <input type="text" value="CHENGHE DESIGN">
+            </div>
+          </div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label>成立年份</label>
+              <input type="text" value="2024">
+            </div>
+            <div class="field">
+              <label>所在城市</label>
+              <input type="text" value="台南市中西區">
+            </div>
+          </div>
+          <div class="form-row cols-3">
+            <div class="field">
+              <label>統計數字 01 — 數值</label>
+              <input type="text" value="2+" placeholder="2+">
+            </div>
+            <div class="field">
+              <label>統計數字 01 — 說明</label>
+              <input type="text" value="年深耕台南">
+            </div>
+            <div class="field">
+              <label>狀態</label>
+              <select><option>顯示</option><option>隱藏</option></select>
+            </div>
+          </div>
+          <div class="field">
+            <label>公司簡介第一段</label>
+            <div class="editor-toolbar">
+              <button class="editor-btn" title="粗體"><strong>B</strong></button>
+              <button class="editor-btn" title="斜體"><em>I</em></button>
+              <button class="editor-btn" title="底線">U̲</button>
+              <button class="editor-btn" title="連結">🔗</button>
+            </div>
+            <div class="editor-area" contenteditable="true">
+              承合設計，兩個人，一個信念——比規模更重要的是品質與誠信。
+              我們不追求接案數量，只求每個合作都讓客戶滿意。
+            </div>
+          </div>
+          <div class="field">
+            <label>公司簡介第二段</label>
+            <div class="editor-toolbar">
+              <button class="editor-btn"><strong>B</strong></button>
+              <button class="editor-btn"><em>I</em></button>
+              <button class="editor-btn">U̲</button>
+            </div>
+            <div class="editor-area" contenteditable="true">
+              台南給了我們最好的養分：這座城市教會我們慢下來，把每件事做到位。
+              日式美學是我們的設計語言——留白、精簡、每個細節都有意義。
+            </div>
+          </div>
+          <div class="field">
+            <label>首頁橫幅圖片</label>
+            <div class="upload-zone">
+              <div class="upload-icon">🖼</div>
+              <div class="upload-text">拖曳圖片至此，或點擊上傳</div>
+              <div class="upload-hint">建議尺寸：1920×1080 · JPG/PNG/WebP · 最大 5MB</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEWS PANEL -->
+    <div class="panel" id="panel-news">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">最新消息管理</div>
+          <button class="btn btn-terracotta" onclick="toggleNewsForm()">+ 新增文章</button>
+        </div>
+
+        <!-- Add news form -->
+        <div id="newsForm" style="display:none;flex-direction:column;gap:16px;padding:24px;border-bottom:1px solid var(--border)">
+          <div style="font-family:var(--font-jp);font-size:10px;letter-spacing:0.2em;color:var(--gold);margin-bottom:4px">新增 / 編輯文章</div>
+          <div class="form-row cols-3">
+            <div class="field">
+              <label>日期</label>
+              <input type="date" id="newsDate">
+            </div>
+            <div class="field">
+              <label>分類</label>
+              <select id="newsCat">
+                <option>公司消息</option>
+                <option>作品發表</option>
+                <option>服務上線</option>
+                <option>文化活動</option>
+                <option>技術更新</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>狀態</label>
+              <select id="newsStat">
+                <option value="pub">已發布</option>
+                <option value="draft">草稿</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>標題</label>
+            <input type="text" id="newsTitle" placeholder="文章標題...">
+          </div>
+          <div class="field">
+            <label>內文</label>
+            <div class="editor-toolbar">
+              <button class="editor-btn"><strong>B</strong></button>
+              <button class="editor-btn"><em>I</em></button>
+              <button class="editor-btn">U̲</button>
+              <button class="editor-btn">🔗</button>
+              <button class="editor-btn">📷</button>
+            </div>
+            <div class="editor-area" id="newsBody" contenteditable="true" placeholder="文章內容...">請輸入文章內容</div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-terracotta" onclick="addNewsItem()">儲存文章</button>
+            <button class="btn btn-outline" onclick="toggleNewsForm()">取消</button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>日期</th>
+                  <th>標題</th>
+                  <th>分類</th>
+                  <th>狀態</th>
+                  <th style="text-align:right">操作</th>
+                </tr>
+              </thead>
+              <tbody id="newsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS PANEL -->
+    <div class="panel" id="panel-products">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">產品服務管理</div>
+          <button class="btn btn-outline" style="font-size:10px">+ 新增服務項目</button>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:16px">
+          <div id="productsList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHOPEE PANEL -->
+    <div class="panel" id="panel-shopee">
+      <div class="roadmap-card">
+        <div class="roadmap-icon">🛒</div>
+        <div>
+          <div class="roadmap-title">蝦皮商店整合 · SHOPEE INTEGRATION</div>
+          <div class="roadmap-desc">Phase 2 開發中。將支援蝦皮商品同步、訂單管理、庫存追蹤。<br>預計完成後可在後台直接管理蝦皮商店商品。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEMBERS PANEL -->
+    <div class="panel" id="panel-members">
+      <div class="roadmap-card">
+        <div class="roadmap-icon">👤</div>
+        <div>
+          <div class="roadmap-title">會員管理系統 · MEMBER SYSTEM</div>
+          <div class="roadmap-desc">Phase 2 開發中。將支援會員註冊、等級管理、購買記錄、點數系統。<br>建議搭配 Supabase 作為後端資料庫。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INQUIRY PANEL -->
+    <div class="panel" id="panel-inquiry">
+      <div class="roadmap-card">
+        <div class="roadmap-icon">✉</div>
+        <div>
+          <div class="roadmap-title">詢問信箱 · INQUIRY INBOX</div>
+          <div class="roadmap-desc">Phase 3 開發中。將整合前台聯絡表單，統一管理客戶詢問，<br>並支援狀態標記（未讀 / 處理中 / 已回覆）。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS PANEL -->
+    <div class="panel" id="panel-settings">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">網站基本設定</div>
+          <button class="btn btn-terracotta" onclick="toast('設定已儲存')">儲存設定</button>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:20px">
+          <div class="form-row cols-2">
+            <div class="field">
+              <label>網站標題</label>
+              <input type="text" value="承合設計 CHENGHE DESIGN">
+            </div>
+            <div class="field">
+              <label>SEO 描述</label>
+              <input type="text" value="台南設計工作室，品牌識別、網站設計、電商整合">
+            </div>
+          </div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label>聯絡 Email</label>
+              <input type="email" value="hello@chenghe.tw">
+            </div>
+            <div class="field">
+              <label>LINE 官方帳號</label>
+              <input type="text" value="@chenghe_design">
+            </div>
+          </div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label>Instagram URL</label>
+              <input type="url" placeholder="https://instagram.com/...">
+            </div>
+            <div class="field">
+              <label>Facebook URL</label>
+              <input type="url" placeholder="https://facebook.com/...">
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div style="font-family:var(--font-jp);font-size:10px;letter-spacing:0.2em;color:var(--text-faint)">帳號安全</div>
+          <div class="form-row cols-2">
+            <div class="field">
+              <label>新密碼</label>
+              <input type="password" placeholder="輸入新密碼">
+            </div>
+            <div class="field">
+              <label>確認新密碼</label>
+              <input type="password" placeholder="再輸入一次">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Mobile sidebar toggle -->
+<button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">☰</button>
+
+<!-- Toast notification -->
+<div id="toast" style="
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--bg3);border:1px solid var(--border-gold);border-radius:2px;
+  padding:12px 24px;font-family:var(--font-jp);font-size:11px;letter-spacing:0.2em;
+  color:var(--gold);z-index:9000;transition:transform 0.3s ease;pointer-events:none;
+"></div>
+
+<script>
+// ── DATA (localStorage as simple CMS for demo)
+const STORAGE_KEY = 'chenghe_cms';
+
+const defaultData = {
+  news: [
+    { id:1, date:'2024-12-20', category:'公司消息', title:'承合設計正式成立，台南又多了一個小而美的設計工作室', status:'pub' },
+    { id:2, date:'2024-12-15', category:'作品發表', title:'完成台南老字號茶行品牌視覺全面升級，傳統與現代的完美融合', status:'pub' },
+    { id:3, date:'2024-12-08', category:'服務上線', title:'電商整合服務正式開放，協助在地品牌進駐蝦皮、打通線上銷售', status:'pub' },
+    { id:4, date:'2024-11-28', category:'文化活動', title:'參與台南創意市集，與在地文創品牌深度交流，碰撞新火花', status:'pub' },
+    { id:5, date:'2024-11-15', category:'技術更新', title:'AI 工具導入服務上線，幫助小型企業以最低成本提升工作效率', status:'pub' },
+  ],
+  products: [
+    { id:1, num:'01', name:'品牌識別設計', icon:'🎨', desc:'Logo、視覺規範、品牌策略', tag:'Brand Identity', visible:true },
+    { id:2, num:'02', name:'網站開發設計', icon:'🖥️', desc:'RWD 形象網站、電商平台、後台管理系統', tag:'Web Development', visible:true },
+    { id:3, num:'03', name:'電商整合・蝦皮', icon:'🛒', desc:'蝦皮商店優化、商品策略、會員系統', tag:'E-Commerce', visible:true },
+    { id:4, num:'04', name:'社群行銷規劃', icon:'📱', desc:'IG、FB 內容策略、視覺設計、廣告投放', tag:'Social Media', visible:true },
+    { id:5, num:'05', name:'AI 工具導入', icon:'🤖', desc:'協助中小企業導入 AI 工具，降低人力成本', tag:'AI Integration', visible:true },
+    { id:6, num:'06', name:'台南文創合作', icon:'🏮', desc:'深耕台南文化底蘊，打造具有台南魂的設計', tag:'Local Culture', visible:true },
+  ]
+};
+
+function getData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : { ...defaultData };
+  } catch { return { ...defaultData }; }
+}
+
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+// ── LOGIN
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'admin123';
+
+function doLogin() {
+  const u = document.getElementById('loginUser').value;
+  const p = document.getElementById('loginPass').value;
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    document.getElementById('loginScreen').style.display = 'none';
+    initAdmin();
+  } else {
+    document.getElementById('loginPass').style.borderColor = '#C04040';
+    setTimeout(() => document.getElementById('loginPass').style.borderColor = '', 1500);
+  }
+}
+
+function doLogout() {
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+// ── PANEL NAVIGATION
+function showPanel(name, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const titles = {
+    dashboard: '儀表板 · DASHBOARD',
+    about: '公司介紹 · ABOUT',
+    news: '最新消息 · NEWS',
+    products: '產品服務 · PRODUCTS',
+    shopee: '蝦皮整合 · SHOPEE',
+    members: '會員管理 · MEMBERS',
+    inquiry: '詢問信箱 · INQUIRY',
+    settings: '網站設定 · SETTINGS',
+  };
+  document.getElementById('topbarTitle').innerHTML = `<strong>${titles[name]?.split(' · ')[0]}</strong> · ${titles[name]?.split(' · ')[1] || ''}`;
+  document.getElementById('sidebar').classList.remove('mobile-open');
+}
+
+// ── NEWS
+let newsData = [];
+let editingNewsId = null;
+
+function renderNewsTable() {
+  const data = getData();
+  newsData = data.news;
+
+  // Dashboard table
+  const dash = document.getElementById('dashNewsTable');
+  if (dash) {
+    dash.innerHTML = newsData.slice(0,3).map(n => `
+      <tr>
+        <td style="font-size:11px;color:var(--text-faint)">${n.date}</td>
+        <td>${n.title.substring(0,30)}...</td>
+        <td><span class="badge badge-pub">${n.category}</span></td>
+        <td><span class="badge ${n.status==='pub'?'badge-pub':'badge-draft'}">${n.status==='pub'?'已發布':'草稿'}</span></td>
+        <td><button class="btn btn-outline" style="padding:4px 10px;font-size:9px" onclick="editNews(${n.id})">編輯</button></td>
+      </tr>
+    `).join('');
+  }
+
+  // News panel table
+  const tbody = document.getElementById('newsTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = newsData.map(n => `
+    <tr>
+      <td style="font-size:11px;color:var(--text-faint);white-space:nowrap">${n.date}</td>
+      <td>${n.title}</td>
+      <td><span class="badge badge-pub">${n.category}</span></td>
+      <td><span class="badge ${n.status==='pub'?'badge-pub':'badge-draft'}">${n.status==='pub'?'已發布':'草稿'}</span></td>
+      <td style="text-align:right">
+        <div class="action-group" style="justify-content:flex-end">
+          <button class="btn btn-gold" style="padding:4px 10px;font-size:9px" onclick="editNews(${n.id})">編輯</button>
+          <button class="btn btn-red" style="padding:4px 10px;font-size:9px" onclick="deleteNews(${n.id})">刪除</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function toggleNewsForm() {
+  const f = document.getElementById('newsForm');
+  f.style.display = f.style.display === 'none' ? 'flex' : 'none';
+  if (f.style.display === 'flex') {
+    // Reset
+    editingNewsId = null;
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('newsDate').value = today;
+    document.getElementById('newsTitle').value = '';
+    document.getElementById('newsBody').textContent = '';
+  }
+}
+
+function editNews(id) {
+  const data = getData();
+  const item = data.news.find(n => n.id === id);
+  if (!item) return;
+  editingNewsId = id;
+  document.getElementById('newsDate').value = item.date;
+  document.getElementById('newsCat').value = item.category;
+  document.getElementById('newsStat').value = item.status;
+  document.getElementById('newsTitle').value = item.title;
+  document.getElementById('newsBody').textContent = item.body || '請輸入內文';
+  document.getElementById('newsForm').style.display = 'flex';
+  document.getElementById('newsForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+function addNewsItem() {
+  const date = document.getElementById('newsDate').value;
+  const title = document.getElementById('newsTitle').value;
+  if (!title || !date) { toast('請填寫日期與標題'); return; }
+
+  const data = getData();
+  const item = {
+    id: editingNewsId || Date.now(),
+    date,
+    category: document.getElementById('newsCat').value,
+    status: document.getElementById('newsStat').value,
+    title,
+    body: document.getElementById('newsBody').textContent,
+  };
+
+  if (editingNewsId) {
+    const idx = data.news.findIndex(n => n.id === editingNewsId);
+    if (idx !== -1) data.news[idx] = item;
+  } else {
+    data.news.unshift(item);
+  }
+
+  saveData(data);
+  renderNewsTable();
+  toggleNewsForm();
+  toast(editingNewsId ? '文章已更新 ✓' : '文章已新增 ✓');
+  editingNewsId = null;
+}
+
+function deleteNews(id) {
+  if (!confirm('確定要刪除這篇文章？')) return;
+  const data = getData();
+  data.news = data.news.filter(n => n.id !== id);
+  saveData(data);
+  renderNewsTable();
+  toast('文章已刪除');
+}
+
+// ── PRODUCTS
+function renderProducts() {
+  const data = getData();
+  const el = document.getElementById('productsList');
+  if (!el) return;
+  el.innerHTML = data.products.map(p => `
+    <div style="border:1px solid var(--border);border-radius:2px;padding:16px 20px;display:flex;align-items:center;gap:16px;background:rgba(255,255,255,0.02)">
+      <span style="font-size:20px">${p.icon}</span>
+      <div style="flex:1">
+        <div style="font-size:12px;color:var(--text)">${p.num} · ${p.name}</div>
+        <div style="font-size:11px;color:var(--text-faint);margin-top:2px">${p.desc}</div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-family:var(--font-jp);font-size:10px;color:var(--text-dim)">
+        <input type="checkbox" ${p.visible?'checked':''} onchange="toggleProduct(${p.id},this.checked)" style="accent-color:var(--terracotta)">
+        顯示
+      </label>
+      <button class="btn btn-outline" style="padding:5px 12px;font-size:9px">編輯</button>
+    </div>
+  `).join('');
+}
+
+function toggleProduct(id, visible) {
+  const data = getData();
+  const p = data.products.find(x => x.id === id);
+  if (p) { p.visible = visible; saveData(data); toast(visible ? '服務已顯示' : '服務已隱藏'); }
+}
+
+// ── ABOUT
+function saveAbout() { toast('公司介紹已儲存 ✓'); }
+
+// ── SIDEBAR MOBILE
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+}
+
+// ── TOAST
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(() => { el.style.transform = 'translateX(-50%) translateY(80px)'; }, 2200);
+}
+
+// ── INIT
+function initAdmin() {
+  renderNewsTable();
+  renderProducts();
+  // Set today's date default
+  const today = new Date().toISOString().split('T')[0];
+  const d = document.getElementById('newsDate');
+  if (d) d.value = today;
+}
+
+// Auto-login for demo
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') doLogin();
+});
+</script>
+</body>
+</html>
